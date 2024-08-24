@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class InMemoryUserRepository implements UserRepository {
+public class UserRepositoryImpl implements UserRepository {
 
     private final HashMap<Long, User> users;
     private final IdentifierGenerator identifierGenerator;
