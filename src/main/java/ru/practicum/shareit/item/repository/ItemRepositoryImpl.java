@@ -72,8 +72,8 @@ public class ItemRepositoryImpl implements ItemRepository {
                     if (!item.getAvailable()) {
                         return false;
                     }
-                    return Stream.of(item.getName(), item.getDescription()).
-                            anyMatch(value -> value.toLowerCase().contains(text.toLowerCase()));
+                    return Stream.of(item.getName(), item.getDescription())
+                            .anyMatch(value -> value.toLowerCase().contains(text.toLowerCase()));
                 })
                 .toList();
     }
