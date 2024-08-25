@@ -74,7 +74,7 @@ public class ItemServiceImpl implements ItemService {
     private Item getItemByUserIdAndItemId(Long userId, Long itemId) {
         return itemRepository.findByUserIdAndItemId(userId, itemId)
                 .orElseThrow(() -> {
-                    String errorMessage = String.format("Элемент с id = %d не найден", itemId);
+                    String errorMessage = String.format("Для пользователя id=%d Элемент id = %d не найден", userId, itemId);
                     log.error(errorMessage);
                     return new NotFoundException(errorMessage);
                 });
