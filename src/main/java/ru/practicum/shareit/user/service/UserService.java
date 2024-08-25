@@ -34,9 +34,9 @@ public class UserService {
     }
 
     private User getUserById(Long userId) {
-        String errorMessage = String.format("Пользователь с id = %d не найден", userId);
         return userRepository.findById(userId)
                 .orElseThrow(() -> {
+                    String errorMessage = String.format("Пользователь с id = %d не найден", userId);
                     log.error(errorMessage);
                     return new NotFoundException(errorMessage);
                 });
