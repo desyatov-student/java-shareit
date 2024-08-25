@@ -61,6 +61,16 @@ public class ItemServiceImpl implements ItemService {
         itemRepository.deleteByUserIdAndItemId(userId, itemId);
     }
 
+    @Override
+    public List<ItemDto> search(String text) {
+        if (text.isBlank()) {
+            return List.of();
+        }
+        return itemRepository.search(text).stream()
+                .map(itemMapper::toDto)
+                .toList();
+    }
+
     private Item getItemByUserIdAndItemId(Long userId, Long itemId) {
         return itemRepository.findByUserIdAndItemId(userId, itemId)
                 .orElseThrow(() -> {

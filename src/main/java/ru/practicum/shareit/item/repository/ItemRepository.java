@@ -17,4 +17,5 @@ public interface ItemRepository {
 
     void deleteByUserIdAndItemId(Long userId, Long itemId);
 
+    List<Item> search(String text);
 }

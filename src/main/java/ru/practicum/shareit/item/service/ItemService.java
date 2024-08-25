@@ -18,4 +18,5 @@ public interface ItemService {
 
     void remove(Long userId, Long itemId);
 
+    List<ItemDto> search(String text);
 }

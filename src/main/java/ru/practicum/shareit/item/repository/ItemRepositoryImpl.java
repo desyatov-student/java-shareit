@@ -6,10 +6,12 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.utils.IdentifierGenerator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Repository
 @RequiredArgsConstructor
@@ -60,5 +62,19 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (items != null) {
             items.remove(itemId);
         }
+    }
+
+    @Override
+    public List<Item> search(String text) {
+        return usersItems.values().stream()
+                .map(HashMap::values)
+                .flatMap(Collection::stream).filter(item -> {
+                    if (!item.getAvailable()) {
+                        return false;
+                    }
+                    return Stream.of(item.getName(), item.getDescription()).
+                            anyMatch(value -> value.toLowerCase().contains(text.toLowerCase()));
+                })
+                .toList();
     }
 }
