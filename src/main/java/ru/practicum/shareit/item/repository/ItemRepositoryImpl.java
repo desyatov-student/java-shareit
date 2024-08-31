@@ -27,6 +27,16 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
+    public Optional<Item> findById(Long itemId) {
+        for (HashMap<Long, Item> map : usersItems.values()) {
+            if (map.containsKey(itemId)) {
+                return Optional.ofNullable(map.get(itemId));
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<Item> findByUserIdAndItemId(Long userId, Long itemId) {
         HashMap<Long, Item> items = usersItems.get(userId);
         if (items == null) {

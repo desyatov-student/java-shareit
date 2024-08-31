@@ -9,6 +9,8 @@ public interface ItemRepository {
 
     List<Item> findAllByUserId(Long userId);
 
+    Optional<Item> findById(Long itemId);
+
     Optional<Item> findByUserIdAndItemId(Long userId, Long itemId);
 
     Item create(Long userId, Item item);
