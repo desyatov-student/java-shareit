@@ -35,11 +35,8 @@ public class ItemController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{itemId}")
-    public ItemDto getById(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
-            @PathVariable Long itemId
-    ) {
-        return itemService.getByUserIdAndItemId(userId, itemId);
+    public ItemDto getById(@PathVariable Long itemId) {
+        return itemService.getById(itemId);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

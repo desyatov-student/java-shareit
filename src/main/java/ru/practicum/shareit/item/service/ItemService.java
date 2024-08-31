@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ItemService {
 
-    ItemDto getByUserIdAndItemId(Long userId, Long itemId);
+    ItemDto getById(Long itemId);
 
     List<ItemDto> getItems(Long userId);
 

@@ -24,9 +24,8 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
 
     @Override
-    public ItemDto getByUserIdAndItemId(Long userId, Long itemId) {
-        checkUserById(userId);
-        Item item = getItemByUserIdAndItemId(userId, itemId);
+    public ItemDto getById(Long itemId) {
+        Item item = getItemById(itemId);
         return itemMapper.toDto(item);
     }
 
@@ -69,6 +68,14 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.search(text).stream()
                 .map(itemMapper::toDto)
                 .toList();
+    }
+
+    private Item getItemById(Long itemId) {
+        return itemRepository.findById(itemId).orElseThrow(() -> {
+            String errorMessage = String.format("Элемент id = %d не найден", itemId);
+            log.error(errorMessage);
+            return new NotFoundException(errorMessage);
+        });
     }
 
     private Item getItemByUserIdAndItemId(Long userId, Long itemId) {
