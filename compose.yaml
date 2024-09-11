@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:16.1
+    container_name: postgres_shareit
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=shareit
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  db-init:
+    image: postgres:16.1
+    container_name: db-init_shareit
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint:
+      - bash
+      - -c
+      - |
+        set -e
+        psql postgresql://dbuser:12345@db:5432/shareit -v ON_ERROR_STOP=1 <<-EOSQL
+        CREATE TABLE IF NOT EXISTS users (
+          id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(512) NOT NULL,
+          registration_date TIMESTAMP,
+          CONSTRAINT UQ_USER_EMAIL UNIQUE (email)
+        );
+  
+        CREATE TABLE IF NOT EXISTS items (
+          id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+          user_id BIGINT,
+          name VARCHAR(255) NOT NULL,
+          description VARCHAR NOT NULL,
+          url VARCHAR(1000),
+          available BOOLEAN NOT NULL,
+          CONSTRAINT fk_items_to_users FOREIGN KEY(user_id) REFERENCES users(id),
+          UNIQUE(id, url)
+        );
+        EOSQL

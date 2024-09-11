@@ -8,6 +8,7 @@ import lombok.Data;
 public class NewItemRequest {
     @NotBlank
     private String name;
+    private String url;
     @NotBlank
     private String description;
     @NotNull

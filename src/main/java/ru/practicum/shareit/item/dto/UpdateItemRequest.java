@@ -7,6 +7,7 @@ import ru.practicum.shareit.validation.NotBlankOrNull;
 public class UpdateItemRequest {
     @NotBlankOrNull
     private String name;
+    private String url;
     @NotBlankOrNull
     private String description;
     private Boolean available;

@@ -18,9 +18,11 @@ public interface ItemMapper {
     ItemDto toDto(Item item);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", ignore = true)
     Item toItem(NewItemRequest request);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Item updateItem(@MappingTarget Item item, UpdateItemRequest request);
 }
