@@ -78,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
                 .toList();
     }
 
-    private Item getItemById(Long itemId) {
+    public Item getItemById(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow(() -> {
             String errorMessage = String.format("Элемент id = %d не найден", itemId);
             log.error(errorMessage);
@@ -89,7 +89,7 @@ public class ItemServiceImpl implements ItemService {
     private void checkUserAccess(Long userId, Item item) {
         User user = getUserById(userId);
         if (!item.getUser().getId().equals(user.getId())) {
-            String errorMessage = String.format("User with id=%d is not owner item with id=%d", userId, item.getId());
+            String errorMessage = String.format("User with id=%d is not owner of item with id=%d", userId, item.getId());
             log.error(errorMessage);
             throw new NotFoundException(errorMessage);
         }

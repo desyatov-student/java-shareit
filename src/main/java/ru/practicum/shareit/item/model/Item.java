@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,15 +28,8 @@ public class Item {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column
     private String url;
-
-    @Column
     private String name;
-
-    @Column
     private String description;
-
-    @Column
     private Boolean available;
 }

@@ -16,3 +16,16 @@ CREATE TABLE IF NOT EXISTS items (
    CONSTRAINT fk_items_to_users FOREIGN KEY(user_id) REFERENCES users(id),
    UNIQUE(id, url)
 );
+
+CREATE TABLE IF NOT EXISTS bookings (
+   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+   booker_id BIGINT,
+   item_id BIGINT,
+   create_date TIMESTAMP NOT NULL,
+   start_date TIMESTAMP NOT NULL,
+   end_date TIMESTAMP NOT NULL,
+   status VARCHAR(50) NOT NULL,
+   CONSTRAINT fk_bookings_to_users FOREIGN KEY(booker_id) REFERENCES users(id),
+   CONSTRAINT fk_bookings_to_items FOREIGN KEY(item_id) REFERENCES items(id),
+   UNIQUE(booker_id, item_id)
+);
