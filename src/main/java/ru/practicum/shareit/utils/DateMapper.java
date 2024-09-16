@@ -34,4 +34,8 @@ public class DateMapper {
         }
         return date.atZone(ZoneId.systemDefault()).toInstant();
     }
+
+    public static Instant now() {
+        return LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant();
+    }
 }

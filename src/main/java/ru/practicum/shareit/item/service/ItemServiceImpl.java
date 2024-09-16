@@ -4,8 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.dto.NewCommentRequest;
+import ru.practicum.shareit.comment.mapper.CommentMapper;
+import ru.practicum.shareit.comment.model.Comment;
+import ru.practicum.shareit.comment.repository.CommentRepository;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithCommentsDto;
 import ru.practicum.shareit.item.dto.NewItemRequest;
 import ru.practicum.shareit.item.dto.UpdateItemRequest;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -13,8 +22,10 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.utils.DateMapper;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,20 +34,23 @@ import java.util.List;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
+    private final CommentRepository commentRepository;
+    private final BookingRepository bookingRepository;
     private final UserService userService;
     private final ItemMapper itemMapper;
+    private final CommentMapper commentMapper;
 
     @Override
-    public ItemDto getById(Long itemId) {
+    public ItemWithCommentsDto getById(Long itemId) {
         Item item = getItemById(itemId);
-        return itemMapper.toDto(item);
+        return itemMapper.toDto(item, getCommentsByItemId(itemId));
     }
 
     @Override
-    public List<ItemDto> getItems(Long userId) {
+    public List<ItemWithCommentsDto> getItems(Long userId) {
         checkUserIsExistingById(userId);
         return itemRepository.findByUserId(userId).stream()
-                .map(itemMapper::toDto)
+                .map(item -> itemMapper.toDto(item, getCommentsByItemId(item.getId())))
                 .toList();
     }
 
@@ -78,12 +92,37 @@ public class ItemServiceImpl implements ItemService {
                 .toList();
     }
 
+    @Transactional
+    @Override
+    public CommentDto addComment(Long userId, Long itemId, NewCommentRequest request) {
+        User author = getUserById(userId);
+        Item item = getItemById(itemId);
+        Optional<Booking> bookingOpt = bookingRepository.findByBooker_IdAndItem_IdAndEndIsBefore(userId, itemId, DateMapper.now());
+        if (bookingOpt.isEmpty()) {
+            String errorMessage = String.format("User with id=%d has not booked item with id=%d", userId, itemId);
+            log.error(errorMessage);
+            throw new ValidationException(errorMessage);
+        }
+        Comment comment = new Comment();
+        comment.setText(request.getText());
+        comment.setItem(item);
+        comment.setAuthor(author);
+        commentRepository.save(comment);
+        return commentMapper.toDto(comment);
+    }
+
     public Item getItemById(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow(() -> {
             String errorMessage = String.format("Элемент id = %d не найден", itemId);
             log.error(errorMessage);
             return new NotFoundException(errorMessage);
         });
+    }
+
+    private List<CommentDto> getCommentsByItemId(Long itemId) {
+        return commentRepository.findByItem_Id(itemId).stream()
+                .map(commentMapper::toDto)
+                .toList();
     }
 
     private void checkUserAccess(Long userId, Item item) {

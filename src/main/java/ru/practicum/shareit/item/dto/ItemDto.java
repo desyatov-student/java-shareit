@@ -5,7 +5,6 @@ import lombok.Data;
 @Data
 public class ItemDto {
     private Long id;
-    private String url;
     private String name;
     private String description;
     private Boolean available;
