@@ -12,8 +12,7 @@ CREATE TABLE IF NOT EXISTS items (
    name VARCHAR(255) NOT NULL,
    description VARCHAR NOT NULL,
    available BOOLEAN NOT NULL,
-   CONSTRAINT fk_items_to_users FOREIGN KEY(user_id) REFERENCES users(id),
-   UNIQUE(id, url)
+   CONSTRAINT fk_items_to_users FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS bookings (
