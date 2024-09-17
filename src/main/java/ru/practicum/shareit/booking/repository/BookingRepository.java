@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -19,5 +20,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, Queryds
 
     Optional<Booking> findByBooker_IdAndItem_IdAndEndIsBefore(Long bookerId, Long itemId, Instant current);
 
-    List<Booking> findByItem_Id(Long itemId);
+    List<Booking> findByItem_Id(Long itemId, Sort sort);
 }

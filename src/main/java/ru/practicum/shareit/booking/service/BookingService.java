@@ -115,7 +115,7 @@ public class BookingService {
     }
 
     private List<BookingDto> getBookingsByUserPredicate(BooleanExpression userPredicate, BookingState state) {
-        Sort sort = new QSort(QBooking.booking.createDate.desc());
+        Sort sort = new QSort(QBooking.booking.createDate.asc());
 
         Predicate predicate = switch (state) {
             case WAITING -> {

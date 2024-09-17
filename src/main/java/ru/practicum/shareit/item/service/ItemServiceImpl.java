@@ -2,9 +2,12 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.querydsl.QSort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.QBooking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.dto.NewCommentRequest;
@@ -24,6 +27,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.utils.DateMapper;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +43,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final ItemMapper itemMapper;
     private final CommentMapper commentMapper;
+    private final DateMapper dateMapper;
 
     @Override
     public ItemWithCommentsDto getById(Long itemId) {
@@ -50,7 +55,11 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemWithCommentsDto> getItems(Long userId) {
         checkUserIsExistingById(userId);
         return itemRepository.findByUserId(userId).stream()
-                .map(item -> itemMapper.toDto(item, getCommentsByItemId(item.getId())))
+                .map(item -> {
+                    ItemWithCommentsDto itemDto = itemMapper.toDto(item, getCommentsByItemId(item.getId()));
+                    updateLastAndNextDates(itemDto);
+                    return itemDto;
+                })
                 .toList();
     }
 
@@ -123,6 +132,25 @@ public class ItemServiceImpl implements ItemService {
         return commentRepository.findByItem_Id(itemId).stream()
                 .map(commentMapper::toDto)
                 .toList();
+    }
+
+    private void updateLastAndNextDates(ItemWithCommentsDto itemDto) {
+        Sort sort = new QSort(QBooking.booking.start.asc());
+        List<Booking> bookings = bookingRepository.findByItem_Id(itemDto.getId(), sort);
+        Instant now = DateMapper.now();
+        String lastBooking = null;
+        String nextBooking = null;
+        for (Booking booking : bookings) {
+            if (booking.getEnd().isBefore(now)) {
+                lastBooking = dateMapper.toString(booking.getEnd());
+            }
+            if (now.isBefore(booking.getStart())) {
+                nextBooking = dateMapper.toString(booking.getStart());
+                break;
+            }
+        }
+        itemDto.setLastBooking(lastBooking);
+        itemDto.setNextBooking(nextBooking);
     }
 
     private void checkUserAccess(Long userId, Item item) {
