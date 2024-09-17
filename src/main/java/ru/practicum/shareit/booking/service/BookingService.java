@@ -117,9 +117,10 @@ public class BookingService {
     }
 
     private List<BookingDto> getBookingsByUserPredicate(BooleanExpression userPredicate, BookingState state) {
-        Sort sort = new QSort(QBooking.booking.createDate.asc());
+        Sort sort = new QSort(QBooking.booking.createDate.desc());
 
         Predicate predicate = switch (state) {
+            case ALL -> userPredicate;
             case CURRENT -> {
                 Instant now = DateMapper.now();
                 BooleanExpression between = Expressions.asDate(now).between(QBooking.booking.start, QBooking.booking.end);
@@ -143,7 +144,6 @@ public class BookingService {
                 BooleanExpression byStatus = QBooking.booking.status.eq(BookingStatus.REJECTED);
                 yield userPredicate.and(byStatus);
             }
-            default -> userPredicate;
         };
 
         Iterable<Booking> bookings = bookingRepository.findAll(predicate, sort);
