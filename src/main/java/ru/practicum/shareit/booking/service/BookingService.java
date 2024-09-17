@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -24,6 +25,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.utils.DateMapper;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -118,6 +120,21 @@ public class BookingService {
         Sort sort = new QSort(QBooking.booking.createDate.asc());
 
         Predicate predicate = switch (state) {
+            case CURRENT -> {
+                Instant now = DateMapper.now();
+                BooleanExpression between = Expressions.asDate(now).between(QBooking.booking.start, QBooking.booking.end);
+                yield userPredicate.and(between);
+            }
+            case PAST -> {
+                Instant now = DateMapper.now();
+                BooleanExpression byEnd = QBooking.booking.end.before(now);
+                yield userPredicate.and(byEnd);
+            }
+            case FUTURE -> {
+                Instant now = DateMapper.now();
+                BooleanExpression byStart = QBooking.booking.start.after(now);
+                yield userPredicate.and(byStart);
+            }
             case WAITING -> {
                 BooleanExpression byStatus = QBooking.booking.status.eq(BookingStatus.WAITING);
                 yield userPredicate.and(byStatus);
