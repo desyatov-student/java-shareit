@@ -17,6 +17,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingRequest;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.constant.WebConstant;
 
 import java.util.List;
 
@@ -30,14 +31,14 @@ public class BookingController {
     @GetMapping("/{bookingId}")
     public BookingDto getById(
             @PathVariable Long bookingId,
-            @RequestHeader("X-Sharer-User-Id") Long userId
+            @RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId
     ) {
         return bookingService.getById(bookingId, userId);
     }
 
     @GetMapping
     public List<BookingDto> getBookings(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId,
             @RequestParam(defaultValue = "ALL") String state
     ) {
         return bookingService.getBookingsByBooker(userId, BookingState.from(state));
@@ -45,7 +46,7 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingDto> getBookingsByOwner(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId,
             @RequestParam(defaultValue = "ALL") String state
     ) {
         return bookingService.getBookingsByOwner(userId, BookingState.from(state));
@@ -54,7 +55,7 @@ public class BookingController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public BookingDto create(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId,
             @Valid @RequestBody NewBookingRequest request
     ) {
         return bookingService.create(userId, request);
@@ -62,7 +63,7 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     public BookingDto approve(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId,
             @PathVariable Long bookingId,
             @RequestParam Boolean approved
     ) {
