@@ -25,13 +25,11 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public List<UserDto> getUsers() {
         return userService.getUsers();
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{userId}")
     public UserDto getById(@PathVariable Long userId) {
         return userService.getById(userId);
@@ -43,13 +41,11 @@ public class UserController {
         return userService.create(user);
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{userId}")
     public UserDto update(@PathVariable Long userId, @Valid @RequestBody UpdateUserRequest request) {
         return userService.update(userId, request);
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{userId}")
     public void removeUser(@PathVariable Long userId) {
         userService.removeUser(userId);

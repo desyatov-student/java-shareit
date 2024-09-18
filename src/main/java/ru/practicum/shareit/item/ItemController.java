@@ -30,13 +30,11 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
 
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public List<ItemWithCommentsDto> getItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.getItems(userId);
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{itemId}")
     public ItemWithCommentsDto getById(@PathVariable Long itemId) {
         return itemService.getById(itemId);
@@ -51,7 +49,6 @@ public class ItemController {
         return itemService.create(userId, request);
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{itemId}")
     public ItemDto update(
             @RequestHeader("X-Sharer-User-Id") Long userId,
@@ -61,7 +58,6 @@ public class ItemController {
         return itemService.update(userId, itemId, request);
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{itemId}")
     public void remove(
             @RequestHeader("X-Sharer-User-Id") Long userId,
