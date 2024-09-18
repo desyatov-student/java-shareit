@@ -12,7 +12,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -21,7 +20,6 @@ import java.time.Instant;
 @Entity
 @Getter
 @Setter
-@ToString
 @Table(name = "bookings", schema = "public")
 public class Booking {
     @Id

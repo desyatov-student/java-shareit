@@ -6,10 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.time.Instant;
 
@@ -17,8 +15,6 @@ import java.time.Instant;
 @Table(name = "users", schema = "public")
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
 public class User {
 
     @Id
