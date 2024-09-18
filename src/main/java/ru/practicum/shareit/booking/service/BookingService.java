@@ -43,8 +43,8 @@ public class BookingService {
 
     @Transactional
     public BookingDto create(Long bookerId, NewBookingRequest request) {
-        if (request.getStart().equals(request.getEnd())) {
-            String errorMessage = "Start and End dates are equal";
+        if (!request.getStart().isBefore(request.getEnd()) ) {
+            String errorMessage = "Start and End dates are wrong";
             log.error(errorMessage);
             throw new ValidationException(errorMessage);
         }
