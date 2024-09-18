@@ -28,9 +28,16 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.utils.DateMapper;
+import ru.practicum.shareit.utils.Tuple;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Slf4j
 @Service
@@ -49,19 +56,23 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemWithCommentsDto getById(Long itemId) {
         Item item = getItemById(itemId);
-        return itemMapper.toDto(item, getCommentsByItemId(itemId));
+        return itemMapper.toDto(item, getCommentsByItems(List.of(item)).getOrDefault(item, List.of()));
     }
 
     @Override
     public List<ItemWithCommentsDto> getItems(Long userId) {
         checkUserIsExistingById(userId);
-        return itemRepository.findByUserId(userId).stream()
-                .map(item -> {
-                    ItemWithCommentsDto itemDto = itemMapper.toDto(item, getCommentsByItemId(item.getId()));
-                    updateLastAndNextDates(itemDto);
-                    return itemDto;
-                })
-                .toList();
+        List<Item> items = itemRepository.findByUserId(userId);
+        Map<Item, List<Comment>> commentsByItems = getCommentsByItems(items);
+        Map<Item, List<Booking>> bookingsByItems = getBookingsByItems(items);
+
+        return items.stream().map(item -> {
+            ItemWithCommentsDto itemDto = itemMapper.toDto(item, commentsByItems.getOrDefault(item, List.of()));
+            Tuple<String, String> dates = findLastAndNextDates(bookingsByItems.getOrDefault(item, List.of()));
+            itemDto.setLastBooking(dates.first);
+            itemDto.setNextBooking(dates.second);
+            return itemDto;
+        }).toList();
     }
 
     @Transactional
@@ -133,15 +144,20 @@ public class ItemServiceImpl implements ItemService {
         });
     }
 
-    private List<CommentDto> getCommentsByItemId(Long itemId) {
-        return commentRepository.findByItem_Id(itemId).stream()
-                .map(commentMapper::toDto)
-                .toList();
+    private Map<Item, List<Comment>> getCommentsByItems(Collection<Item> items) {
+       return commentRepository.findByItemIn(items, Sort.by(DESC, "created"))
+                .stream()
+                .collect(groupingBy(Comment::getItem, toList()));
     }
 
-    private void updateLastAndNextDates(ItemWithCommentsDto itemDto) {
+    private Map<Item, List<Booking>> getBookingsByItems(Collection<Item> items) {
         Sort sort = new QSort(QBooking.booking.start.asc());
-        List<Booking> bookings = bookingRepository.findByItem_Id(itemDto.getId(), sort);
+        return bookingRepository.findByItemIn(items, sort)
+                .stream()
+                .collect(groupingBy(Booking::getItem, toList()));
+    }
+
+    private Tuple<String, String> findLastAndNextDates(List<Booking> bookings) {
         Instant now = DateMapper.now();
         String lastBooking = null;
         String nextBooking = null;
@@ -154,8 +170,7 @@ public class ItemServiceImpl implements ItemService {
                 break;
             }
         }
-        itemDto.setLastBooking(lastBooking);
-        itemDto.setNextBooking(nextBooking);
+        return new Tuple<>(lastBooking, nextBooking);
     }
 
     private void checkUserAccess(Long userId, Item item) {

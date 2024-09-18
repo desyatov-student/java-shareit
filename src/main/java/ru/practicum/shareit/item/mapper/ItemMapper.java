@@ -5,7 +5,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.mapper.CommentMapperImpl;
+import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithCommentsDto;
 import ru.practicum.shareit.item.dto.NewItemRequest;
@@ -16,14 +17,14 @@ import java.util.List;
 
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 
-@Mapper(componentModel = SPRING)
+@Mapper(componentModel = SPRING, uses = {CommentMapperImpl.class})
 public interface ItemMapper {
 
     ItemDto toDto(Item item);
 
     @Mapping(target = "lastBooking", ignore = true)
     @Mapping(target = "nextBooking", ignore = true)
-    ItemWithCommentsDto toDto(Item item, List<CommentDto> comments);
+    ItemWithCommentsDto toDto(Item item, List<Comment> comments);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
