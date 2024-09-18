@@ -1,5 +1,7 @@
 package ru.practicum.shareit.item.service;
 
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -29,7 +31,6 @@ import ru.practicum.shareit.utils.DateMapper;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -106,8 +107,12 @@ public class ItemServiceImpl implements ItemService {
     public CommentDto addComment(Long userId, Long itemId, NewCommentRequest request) {
         User author = getUserById(userId);
         Item item = getItemById(itemId);
-        Optional<Booking> bookingOpt = bookingRepository.findByBooker_IdAndItem_IdAndEndIsBefore(userId, itemId, DateMapper.now());
-        if (bookingOpt.isEmpty()) {
+        BooleanExpression byBookerId = QBooking.booking.booker.id.eq(userId);
+        BooleanExpression byItemId = QBooking.booking.item.id.eq(itemId);
+        BooleanExpression byEnd = QBooking.booking.end.before(DateMapper.now());
+        Predicate predicate = byBookerId.and(byItemId).and(byEnd);
+        boolean bookingExists = bookingRepository.exists(predicate);
+        if (!bookingExists) {
             String errorMessage = String.format("User with id=%d has not booked item with id=%d", userId, itemId);
             log.error(errorMessage);
             throw new ValidationException(errorMessage);
