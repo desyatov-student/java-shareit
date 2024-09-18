@@ -17,9 +17,10 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingRequest;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.constant.WebConstant;
 
 import java.util.List;
+
+import static ru.practicum.shareit.constant.WebConstant.HEADER_X_SHARER_USER_ID;
 
 @RestController
 @RequestMapping(path = "/bookings")
@@ -31,14 +32,14 @@ public class BookingController {
     @GetMapping("/{bookingId}")
     public BookingDto getById(
             @PathVariable Long bookingId,
-            @RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId
+            @RequestHeader(HEADER_X_SHARER_USER_ID) Long userId
     ) {
         return bookingService.getById(bookingId, userId);
     }
 
     @GetMapping
     public List<BookingDto> getBookings(
-            @RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId,
+            @RequestHeader(HEADER_X_SHARER_USER_ID) Long userId,
             @RequestParam(defaultValue = "ALL") String state
     ) {
         return bookingService.getBookingsByBooker(userId, BookingState.from(state));
@@ -46,7 +47,7 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingDto> getBookingsByOwner(
-            @RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId,
+            @RequestHeader(HEADER_X_SHARER_USER_ID) Long userId,
             @RequestParam(defaultValue = "ALL") String state
     ) {
         return bookingService.getBookingsByOwner(userId, BookingState.from(state));
@@ -55,7 +56,7 @@ public class BookingController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public BookingDto create(
-            @RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId,
+            @RequestHeader(HEADER_X_SHARER_USER_ID) Long userId,
             @Valid @RequestBody NewBookingRequest request
     ) {
         return bookingService.create(userId, request);
@@ -63,7 +64,7 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     public BookingDto approve(
-            @RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId,
+            @RequestHeader(HEADER_X_SHARER_USER_ID) Long userId,
             @PathVariable Long bookingId,
             @RequestParam Boolean approved
     ) {

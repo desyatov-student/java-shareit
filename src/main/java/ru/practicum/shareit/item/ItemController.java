@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.dto.NewCommentRequest;
-import ru.practicum.shareit.constant.WebConstant;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithCommentsDto;
 import ru.practicum.shareit.item.dto.NewItemRequest;
@@ -25,6 +24,8 @@ import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
 
+import static ru.practicum.shareit.constant.WebConstant.HEADER_X_SHARER_USER_ID;
+
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<ItemWithCommentsDto> getItems(@RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId) {
+    public List<ItemWithCommentsDto> getItems(@RequestHeader(HEADER_X_SHARER_USER_ID) Long userId) {
         return itemService.getItems(userId);
     }
 
@@ -44,7 +45,7 @@ public class ItemController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ItemDto create(
-            @RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId,
+            @RequestHeader(HEADER_X_SHARER_USER_ID) Long userId,
             @Valid @RequestBody NewItemRequest request
     ) {
         return itemService.create(userId, request);
@@ -52,7 +53,7 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ItemDto update(
-            @RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId,
+            @RequestHeader(HEADER_X_SHARER_USER_ID) Long userId,
             @PathVariable Long itemId,
             @Valid @RequestBody UpdateItemRequest request
     ) {
@@ -61,7 +62,7 @@ public class ItemController {
 
     @DeleteMapping("/{itemId}")
     public void remove(
-            @RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId,
+            @RequestHeader(HEADER_X_SHARER_USER_ID) Long userId,
             @PathVariable Long itemId
     ) {
         itemService.remove(userId, itemId);
@@ -77,7 +78,7 @@ public class ItemController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{itemId}/comment")
     public CommentDto addComment(
-            @RequestHeader(WebConstant.HEADER_X_SHARER_USER_ID) Long userId,
+            @RequestHeader(HEADER_X_SHARER_USER_ID) Long userId,
             @PathVariable Long itemId,
             @Valid @RequestBody NewCommentRequest request
     ) {
