@@ -62,11 +62,7 @@ public class BookingService {
             log.error(errorMessage);
             throw new ValidationException(errorMessage);
         }
-        Booking booking = new Booking();
-        booking.setItem(item);
-        booking.setBooker(user);
-        booking.setStart(dateMapper.toInstant(request.getStart()));
-        booking.setEnd(dateMapper.toInstant(request.getEnd()));
+        Booking booking = bookingMapper.update(new Booking(), user, item, request);
         bookingRepository.save(booking);
         return bookingMapper.toDto(booking);
     }
