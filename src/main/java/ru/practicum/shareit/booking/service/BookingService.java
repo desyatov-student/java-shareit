@@ -43,11 +43,6 @@ public class BookingService {
 
     @Transactional
     public BookingDto create(Long bookerId, NewBookingRequest request) {
-        if (!request.getStart().isBefore(request.getEnd())) {
-            String errorMessage = "Start and End dates are wrong";
-            log.error(errorMessage);
-            throw new ValidationException(errorMessage);
-        }
         User user = getUserById(bookerId);
         // проверка повторного бронирования
         if (bookingRepository.findByBookerIdAndItemId(bookerId, request.getItemId()).isPresent()) {
