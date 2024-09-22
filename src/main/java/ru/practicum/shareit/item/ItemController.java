@@ -14,12 +14,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.dto.NewCommentRequest;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithCommentsDto;
 import ru.practicum.shareit.item.dto.NewItemRequest;
 import ru.practicum.shareit.item.dto.UpdateItemRequest;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
+
+import static ru.practicum.shareit.constant.WebConstant.HEADER_X_SHARER_USER_ID;
 
 @RestController
 @RequestMapping("/items")
@@ -27,41 +32,37 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
 
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public List<ItemDto> getItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemWithCommentsDto> getItems(@RequestHeader(HEADER_X_SHARER_USER_ID) Long userId) {
         return itemService.getItems(userId);
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{itemId}")
-    public ItemDto getById(@PathVariable Long itemId) {
+    public ItemWithCommentsDto getById(@PathVariable Long itemId) {
         return itemService.getById(itemId);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ItemDto create(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(HEADER_X_SHARER_USER_ID) Long userId,
             @Valid @RequestBody NewItemRequest request
     ) {
         return itemService.create(userId, request);
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{itemId}")
     public ItemDto update(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(HEADER_X_SHARER_USER_ID) Long userId,
             @PathVariable Long itemId,
             @Valid @RequestBody UpdateItemRequest request
     ) {
         return itemService.update(userId, itemId, request);
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{itemId}")
     public void remove(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(HEADER_X_SHARER_USER_ID) Long userId,
             @PathVariable Long itemId
     ) {
         itemService.remove(userId, itemId);
@@ -70,5 +71,17 @@ public class ItemController {
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam String text) {
         return itemService.search(text);
+    }
+
+    // Comments
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(
+            @RequestHeader(HEADER_X_SHARER_USER_ID) Long userId,
+            @PathVariable Long itemId,
+            @Valid @RequestBody NewCommentRequest request
+    ) {
+        return itemService.addComment(userId, itemId, request);
     }
 }

@@ -33,7 +33,7 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
-    private User getUserById(Long userId) {
+    public User getUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> {
                     String errorMessage = String.format("Пользователь с id = %d не найден", userId);
@@ -50,7 +50,7 @@ public class UserService {
         }
 
         User user = userMapper.toUser(request);
-        user = userRepository.create(user);
+        user = userRepository.save(user);
         log.info("Creating user is successful: {}", user);
         return userMapper.toDto(user);
     }
@@ -64,13 +64,13 @@ public class UserService {
         }
 
         userMapper.updateUser(updatedUser, request);
-        updatedUser = userRepository.update(updatedUser);
+        updatedUser = userRepository.save(updatedUser);
         log.info("Updating user is successful: {}", updatedUser);
         return userMapper.toDto(updatedUser);
     }
 
     public void removeUser(Long userId) {
         User user = getUserById(userId);
-        userRepository.remove(user);
+        userRepository.delete(user);
     }
 }

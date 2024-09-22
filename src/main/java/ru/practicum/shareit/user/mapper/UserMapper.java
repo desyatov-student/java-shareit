@@ -18,9 +18,11 @@ public interface UserMapper {
     UserDto toDto(User user);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "registrationDate", ignore = true)
     User toUser(NewUserRequest request);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "registrationDate", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     User updateUser(@MappingTarget User user, UpdateUserRequest request);
 }
