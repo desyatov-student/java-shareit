@@ -9,10 +9,12 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS items (
    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
    user_id BIGINT,
+   request_id BIGINT,
    name VARCHAR(255) NOT NULL,
    description VARCHAR NOT NULL,
    available BOOLEAN NOT NULL,
-   CONSTRAINT fk_items_to_users FOREIGN KEY(user_id) REFERENCES users(id)
+   CONSTRAINT fk_items_to_users FOREIGN KEY(user_id) REFERENCES users(id),
+   CONSTRAINT fk_items_to_requests FOREIGN KEY(request_id) REFERENCES item_requests(id)
 );
 
 CREATE TABLE IF NOT EXISTS bookings (
@@ -37,4 +39,14 @@ CREATE TABLE IF NOT EXISTS comments (
   CONSTRAINT fk_comments_to_users FOREIGN KEY(author_id) REFERENCES users(id),
   CONSTRAINT fk_comments_to_items FOREIGN KEY(item_id) REFERENCES items(id),
   UNIQUE(item_id, author_id)
+);
+
+CREATE TABLE IF NOT EXISTS item_requests (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+  description VARCHAR NOT NULL,
+--  item_id BIGINT,
+  author_id BIGINT NOT NULL,
+  created TIMESTAMP NOT NULL,
+  CONSTRAINT fk_item_requests_to_users FOREIGN KEY(author_id) REFERENCES users(id)
+--  CONSTRAINT fk_item_requests_to_items FOREIGN KEY(item_id) REFERENCES items(id)
 );

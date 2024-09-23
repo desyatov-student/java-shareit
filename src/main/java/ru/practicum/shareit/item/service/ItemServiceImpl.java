@@ -25,6 +25,8 @@ import ru.practicum.shareit.item.dto.UpdateItemRequest;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.utils.DateMapper;
@@ -49,6 +51,7 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
     private final UserService userService;
+    private final ItemRequestService itemRequestService;
     private final ItemMapper itemMapper;
     private final CommentMapper commentMapper;
     private final DateMapper dateMapper;
@@ -79,8 +82,11 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto create(Long userId, NewItemRequest request) {
         User user = getUserById(userId);
-        Item item = itemMapper.toItem(request);
-        item.setUser(user);
+        ItemRequest itemRequest = null;
+        if (request.getRequestId() != null) {
+            itemRequest = getItemRequestById(request.getRequestId());
+        }
+        Item item = itemMapper.toItem(request, user, itemRequest);
         item = itemRepository.save(item);
         return itemMapper.toDto(item);
     }
@@ -184,6 +190,10 @@ public class ItemServiceImpl implements ItemService {
 
     private User getUserById(Long userId) {
         return userService.getUserById(userId);
+    }
+
+    private ItemRequest getItemRequestById(Long requestId) {
+        return itemRequestService.getItemRequest(requestId);
     }
 
     private void checkUserIsExistingById(Long userId) {
