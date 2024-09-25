@@ -11,9 +11,11 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class DateMapper {
 
+    private static final ZoneId ZONE = ZoneId.systemDefault();
+
     public String toString(Instant date) {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
-                .withZone(ZoneId.systemDefault());
+                .withZone(ZONE);
 
         return date != null ? formatter.format(date) : null;
     }
@@ -24,7 +26,7 @@ public class DateMapper {
         }
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
                 .withZone(ZoneId.systemDefault());
-        ZonedDateTime localDateTime = LocalDateTime.parse(stringDate, formatter).atZone(ZoneId.systemDefault());
+        ZonedDateTime localDateTime = LocalDateTime.parse(stringDate, formatter).atZone(ZONE);
         return localDateTime.toInstant();
     }
 
@@ -32,10 +34,10 @@ public class DateMapper {
         if (date == null) {
             return null;
         }
-        return date.atZone(ZoneId.systemDefault()).toInstant();
+        return date.atZone(ZONE).toInstant();
     }
 
     public static Instant now() {
-        return LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant();
+        return LocalDateTime.now().atZone(ZONE).toInstant();
     }
 }
