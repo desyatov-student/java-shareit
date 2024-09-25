@@ -11,8 +11,6 @@ import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.comment.dto.NewCommentRequest;
 import ru.practicum.shareit.item.dto.NewItemRequest;
 import ru.practicum.shareit.item.dto.UpdateItemRequest;
-import ru.practicum.shareit.user.dto.NewUserRequest;
-import ru.practicum.shareit.user.dto.UpdateUserRequest;
 
 import java.util.Map;
 
