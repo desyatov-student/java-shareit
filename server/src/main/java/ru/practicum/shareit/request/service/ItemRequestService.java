@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.dto.NewIteRequestRequest;
+import ru.practicum.shareit.request.dto.NewItemRequestRequest;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.model.QItemRequest;
@@ -29,8 +29,8 @@ public class ItemRequestService {
     private final ItemRequestMapper itemRequestMapper;
 
     @Transactional
-    public ItemRequestDto create(NewIteRequestRequest request) {
-        User user = getUserById(request.getAuthorId());
+    public ItemRequestDto create(Long authorId, NewItemRequestRequest request) {
+        User user = getUserById(authorId);
         ItemRequest itemRequest = itemRequestMapper.update(new ItemRequest(), user, request);
         itemRequestRepository.save(itemRequest);
         return itemRequestMapper.toDto(itemRequest);

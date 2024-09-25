@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class NewItemRequestBody {
+public class NewItemRequestRequest {
     @NotBlank
     private String description;
 }
