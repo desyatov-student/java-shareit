@@ -24,7 +24,7 @@
 	</properties>
 
 	<modules>
-		<module>core</module>
+		<module>dto</module>
 		<module>gateway</module>
 		<module>server</module>
 	</modules>
