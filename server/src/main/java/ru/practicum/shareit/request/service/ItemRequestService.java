@@ -50,9 +50,9 @@ public class ItemRequestService {
     }
 
     public List<ItemRequestDto> getRequestsByAuthor(Long authorId) {
-        checkUserIsExistingById(authorId);
+        User author = getUserById(authorId);
         Sort sort = new QSort(QItemRequest.itemRequest.created.asc());
-        return itemRequestRepository.findByAuthor_Id(authorId, sort).stream()
+        return itemRequestRepository.findByAuthor(author, sort).stream()
                 .map(itemRequestMapper::toDto)
                 .toList();
     }
