@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -54,7 +53,7 @@ class BookingControllerTests {
         // Given
         long bookingId = 1L;
         long userId = 2L;
-        BookingDto booking = TestData.createBooking();
+        BookingDto booking = TestData.createBookingDto();
         when(service.getById(bookingId, userId)).thenReturn(booking);
 
         // When
@@ -131,7 +130,7 @@ class BookingControllerTests {
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(5)
         );
-        BookingDto booking = TestData.createBooking();
+        BookingDto booking = TestData.createBookingDto();
         when(service.create(userId, request)).thenReturn(booking);
 
         // When
@@ -192,7 +191,7 @@ class BookingControllerTests {
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(5)
         );
-        BookingDto booking = TestData.createBooking();
+        BookingDto booking = TestData.createBookingDto();
         when(service.approve(userId, bookingId, true)).thenReturn(booking);
 
         // When
