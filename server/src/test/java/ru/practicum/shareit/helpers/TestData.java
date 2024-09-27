@@ -5,6 +5,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
+import java.util.List;
+
 public class TestData {
     public static BookingDto createBooking() {
         return new BookingDto(
@@ -15,6 +17,29 @@ public class TestData {
                 "2024-01-01 11:00:00.000",
                 "2024-01-10 12:00:00.000",
                 "WAITING"
+        );
+    }
+
+    public static List<BookingDto> createBookings() {
+        return List.of(
+                new BookingDto(
+                        1L,
+                        new ItemDto(1L, "name1", "desc1", true),
+                        createUserDto(),
+                        "2024-01-01 10:00:00.000",
+                        "2024-01-01 11:00:00.000",
+                        "2024-01-10 12:00:00.000",
+                        "WAITING"
+                ),
+                new BookingDto(
+                        2L,
+                        new ItemDto(2L, "name2", "desc2", true),
+                        createUserDto(),
+                        "2024-01-01 10:00:00.000",
+                        "2024-01-01 11:00:00.000",
+                        "2024-01-10 12:00:00.000",
+                        "WAITING"
+                )
         );
     }
 
