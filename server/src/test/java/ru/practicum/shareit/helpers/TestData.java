@@ -42,7 +42,7 @@ public class TestData {
         return List.of(
                 new BookingDto(
                         1L,
-                        new ItemDto(1L, "name1", "desc1", true),
+                        new ItemDto(1L, "BookingDtoName1", "BookingDtoDesc1", true),
                         createUserDto(),
                         "2024-01-01 10:00:00.000",
                         "2024-01-01 11:00:00.000",
@@ -51,7 +51,7 @@ public class TestData {
                 ),
                 new BookingDto(
                         2L,
-                        new ItemDto(2L, "name2", "desc2", true),
+                        new ItemDto(2L, "BookingDtoName2", "BookingDtoDesc2", true),
                         createUserDto(),
                         "2024-01-01 10:00:00.000",
                         "2024-01-01 11:00:00.000",
@@ -65,7 +65,7 @@ public class TestData {
         return new UserDto(
                 1L,
                 "email@mail.ru",
-                "name"
+                "UserDtoName"
         );
     }
 
@@ -76,15 +76,15 @@ public class TestData {
     public static User createUser(String email) {
         User user = new User();
         user.setEmail(email);
-        user.setName("name");
+        user.setName("UserName");
         return user;
     }
 
     public static ItemDto createItemDto() {
         return new ItemDto(
                 1L,
-                "name",
-                "desc",
+                "ItemDtoName",
+                "ItemDtoDesc",
                 true
         );
     }
@@ -92,8 +92,8 @@ public class TestData {
     public static Item createItem(User user) {
         Item item = new Item();
         item.setUser(user);
-        item.setName("name");
-        item.setDescription("desc");
+        item.setName("ItemName");
+        item.setDescription("ItemDesc");
         item.setAvailable(true);
         return item;
     }

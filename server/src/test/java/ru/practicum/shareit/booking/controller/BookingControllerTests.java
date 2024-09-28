@@ -186,11 +186,6 @@ class BookingControllerTests {
         // Given
         long userId = 2L;
         long bookingId = 3L;
-        NewBookingRequest request = new NewBookingRequest(
-                1L,
-                LocalDateTime.now().plusDays(1),
-                LocalDateTime.now().plusDays(5)
-        );
         BookingDto booking = TestData.createBookingDto();
         when(service.approve(userId, bookingId, true)).thenReturn(booking);
 

@@ -30,6 +30,16 @@ public class DateMapper {
         return localDateTime.toInstant();
     }
 
+    public LocalDateTime toLocalDateTime(String stringDate) {
+        if (stringDate == null) {
+            return null;
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+                .withZone(ZoneId.systemDefault());
+        ZonedDateTime localDateTime = LocalDateTime.parse(stringDate, formatter).atZone(ZONE);
+        return localDateTime.toLocalDateTime();
+    }
+
     public Instant toInstant(LocalDateTime date) {
         if (date == null) {
             return null;

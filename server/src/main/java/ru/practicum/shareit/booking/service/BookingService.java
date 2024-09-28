@@ -39,7 +39,6 @@ public class BookingService {
     private final UserService userService;
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
-    private final DateMapper dateMapper;
 
     @Transactional
     public BookingDto create(Long bookerId, NewBookingRequest request) {
@@ -71,39 +70,40 @@ public class BookingService {
             log.error(errorMessage);
             throw new ValidationException(errorMessage);
         }
-
+        User user;
         try {
-            checkUserIsExistingById(userId);
+            user = getUserById(userId);
         } catch (Exception e) {
             String errorMessage = String.format("Пользователь с id=%d не найден", userId);
             log.error(errorMessage);
             throw new ValidationException(errorMessage);
         }
         // проверяем владельца. только владелец может подтвердить бронь
-        checkOwner(userId, booking.getItem());
+        checkOwner(user.getId(), booking.getItem());
         BookingStatus status = approved ? BookingStatus.APPROVED : BookingStatus.REJECTED;
         booking.setStatus(status);
+        booking.getItem().setAvailable(false);
         bookingRepository.save(booking);
         return bookingMapper.toDto(booking);
     }
 
     public BookingDto getById(Long bookingId, Long userId) {
         Booking booking = getBooking(bookingId);
-        checkUserIsExistingById(userId);
+        User user = getUserById(userId);
         // проверяем пользователя. владелец вещи или тот кто забронировал
-        checkUserAccess(userId, booking);
+        checkUserAccess(user.getId(), booking);
         return bookingMapper.toDto(booking);
     }
 
     public List<BookingDto> getBookingsByBooker(Long bookerId, BookingState state) {
-        checkUserIsExistingById(bookerId);
-        BooleanExpression byBookerId = QBooking.booking.booker.id.eq(bookerId);
+        User booker = getUserById(bookerId);
+        BooleanExpression byBookerId = QBooking.booking.booker.id.eq(booker.getId());
         return getBookingsByUserPredicate(byBookerId, state);
     }
 
     public List<BookingDto> getBookingsByOwner(Long userId, BookingState state) {
-        checkUserIsExistingById(userId);
-        BooleanExpression byUserId = QBooking.booking.item.id.eq(userId);
+        User owner = getUserById(userId);
+        BooleanExpression byUserId = QBooking.booking.item.id.eq(owner.getId());
         return getBookingsByUserPredicate(byUserId, state);
     }
 
@@ -176,9 +176,5 @@ public class BookingService {
 
     private Item getItemById(Long itemId) {
         return itemService.getItemById(itemId);
-    }
-
-    private void checkUserIsExistingById(Long userId) {
-        userService.getUserById(userId);
     }
 }
