@@ -172,7 +172,7 @@ class BookingServiceTests {
         booking.setStatus(BookingStatus.APPROVED);
 
         when(bookingRepository.findById(booking.getId())).thenReturn(Optional.of(booking));
-        when(userService.getUserById(owner.getId())).thenReturn(owner);
+        when(userService.getUserById(booker.getId())).thenReturn(booker);
 
         // When
         BookingDto actualBookingDto = bookingService.getById(booking.getId(), booker.getId());
